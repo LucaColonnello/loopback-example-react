@@ -15,7 +15,7 @@ var webpackConfig = {
     cache: true,
     entry: "./client/reactapp/index.js",
     output: {
-        path: path.join(__dirname, "client/reactapp/"),
+        path: path.join(__dirname, "client/public/"),
         filename: "app.js"
     },
     module: {
