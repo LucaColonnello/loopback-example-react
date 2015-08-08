@@ -1,6 +1,7 @@
 // Generated on 2014-06-23 using generator-angular 0.9.1
 'use strict';
 
+var buildClientBundle = require('./client/lbclient/build');
 var fs = require('fs');
 var path = require('path');
 
@@ -14,8 +15,16 @@ module.exports = function (grunt) {
   require('time-grunt')(grunt);
 
   // require webpack
-  var webpack = require("webpack");
-  var webpackConfig = require("./webpack.config.js");
+  var
+    webpack = require("webpack")
+  ,  webpackConfig = require("./webpack.config.js")
+  ,  webpackBuildPlugins = new webpack.DefinePlugin({
+      "process.env": {
+        // This has effect on the react lib size
+        "NODE_ENV": JSON.stringify("production")
+      }
+     })
+  ;
 
   // Define the configuration for all the tasks
   grunt.initConfig({
@@ -24,14 +33,7 @@ module.exports = function (grunt) {
     webpack: {
       options: webpackConfig,
       build: {
-        plugins: webpackConfig.plugins.concat(
-          new webpack.DefinePlugin({
-            "process.env": {
-              // This has effect on the react lib size
-              "NODE_ENV": JSON.stringify("production")
-            }
-          })
-        )
+        plugins: ( webpackConfig.plugins ) ? webpackConfig.plugins.concat( webpackBuildPlugins ) : [ webpackBuildPlugins ]
       },
       "build-dev": {
         devtool: "sourcemap",
@@ -47,10 +49,6 @@ module.exports = function (grunt) {
         options: {
           livereload: '<%= connect.options.livereload %>'
         }
-      },
-      jsTest: {
-        files: ['./client/public/test/spec/{,*/}*.js'],
-        tasks: ['karma']
       },
       gruntfile: {
         files: ['Gruntfile.js']
@@ -74,7 +72,8 @@ module.exports = function (grunt) {
         port: 3000,
         // Change this to '0.0.0.0' to access the server from outside.
         hostname: 'localhost',
-        livereload: 35729
+        livereload: 35729,
+        keepalive: true
       },
       test: {
         options: {
@@ -112,6 +111,10 @@ module.exports = function (grunt) {
 
   });
 
+  grunt.registerTask('build-lbclient', 'Build lbclient browser bundle', function() {
+    var done = this.async();
+    buildClientBundle(process.env.NODE_ENV || 'development', done);
+  });
   
   grunt.registerTask('run', 'Start the app server', function() {
     var done = this.async();
@@ -139,11 +142,25 @@ module.exports = function (grunt) {
       });
   });
 
+  grunt.registerTask('serve', 'Compile then start the app server', function (target) {
+    if (target === 'dist') {
+      return grunt.task.run(['build', 'run:dist:keepalive']);
+    }
+
+    grunt.task.run([
+      'test',
+      "build-lbclient",
+      'webpack:build-dev',
+      'run:development',
+      'watch'
+    ]);
+  });
+
   // TODO: check if with Jest compilation must be done or Jest compile babel and jsx yet
-  grunt.registerTask('test:client', [
+  /*grunt.registerTask('test:client', [
     'webpack:build-dev',
     'connect:test',
-  ]);
+  ]);*/
 
   grunt.registerTask('test:common', [
     'mochaTest:common'
@@ -156,16 +173,16 @@ module.exports = function (grunt) {
   grunt.registerTask('test', [
     'test:server',
     'test:common',
-    'test:client'
+    //'test:client'
   ]);
 
   grunt.registerTask('build', [
     'test',
-    'webpack:build',
+    "build-lbclient",
+    'webpack:build'
   ]);
 
   grunt.registerTask('default', [
-    'test',
     'build'
   ]);
 };

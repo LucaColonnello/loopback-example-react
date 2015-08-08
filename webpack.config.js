@@ -1,6 +1,5 @@
 var path = require("path");
 var webpack = require("webpack");
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 var AUTOPREFIXER_LOADER = 'autoprefixer-loader?{browsers:[' +
   '"Android 2.3", "Android >= 4", "Chrome >= 20", "Firefox >= 24", ' +
@@ -23,9 +22,14 @@ var webpackConfig = {
             {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
-                loader: 'babel-loader',
-                query: { stage: 0 }
+                loaders: [
+                    'babel-loader?stage=0'
+                ]
             },
+            {
+                test: /\.json$/,
+                loader: "json-loader"
+            }
         ]
     },
 
@@ -34,6 +38,7 @@ var webpackConfig = {
         modulesDirectories: ["node_modules", "bower_components"],
         extensions: ['', '.js', '.jsx']
     }
+    
 };
 
 
