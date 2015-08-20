@@ -106,6 +106,13 @@ module.exports = function (grunt) {
           clearRequireCache: false
         },
         src: ['server/test/**/*.js']
+      },
+      client: {
+        options: {
+          reporter: 'spec',
+          require: './mocha-babel.js'
+        },
+        src: ['client/reactapp/components/tests/*.js']
       }
     }
 
@@ -170,10 +177,14 @@ module.exports = function (grunt) {
     'mochaTest:server'
   ]);
 
+  grunt.registerTask('test:client', [
+    'mochaTest:client'
+  ]);
+
   grunt.registerTask('test', [
     'test:server',
     'test:common',
-    //'test:client'
+    'test:client'
   ]);
 
   grunt.registerTask('build', [

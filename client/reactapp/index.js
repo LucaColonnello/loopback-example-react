@@ -1,3 +1,9 @@
-import data from "./data";
+import React from 'react';
+import Router from './router';
 
-const a = "ciaoo";
+// init router
+Router.run( function( Handler, state ) {
+	React.render( (
+		<Handler {...state} />
+	), document.getElementById( 'app-container' ) );
+} );
