@@ -4,9 +4,9 @@ import {
 	App
 ,	IndexPage
 ,	UserPage
-//,	ToDoPage
 ,	LoginPage
 ,	RegisterPage
+,	TodosPage
 } from './components';
 
 const Route = Router.Route;
@@ -17,6 +17,7 @@ const router = Router.create({
 		<Route path="/me" handler={UserPage}></Route>
 		<Route path="/login" handler={LoginPage}></Route>
 		<Route path="/register" handler={RegisterPage}></Route>
+		<Route path="/my/todos" handler={TodosPage}></Route>
 	</Route>
 	]
 });
@@ -24,6 +25,6 @@ const router = Router.create({
 export default router;
 
 /*
-	<Route path="/my/todos/:status" handler={ToDoPage}></Route>
-	<Route path="/my/todos" handler={ToDoPage}></Route>
+	<Route path="/my/todos/:status" handler={TodoPage}></Route>
+	
 */
